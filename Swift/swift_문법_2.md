@@ -262,5 +262,122 @@ hello("수열", "전")
 
 </br>
 
-## 클로저 (Closer)
+### 클로저 (Closure)
 ***
+
+클로저를 상요하면 코드를 조금 더 간결하게 만들 수 있다. 클로저란 중괄호로 감싸진 '실행 가능한 코드 블럭' 이다. 다른 언어에 있는 람다와 유사하다.
+
+```swift
+func helloGenerator(message: String) -> (String, String) -> String {
+  return { (firstName: String, lastName: String) -> String in
+    return lastName + firstName + message
+  }
+}
+```
+
+함수와 다르게 함수 이름 정의가 따로 존재하지 않는다. 하지만 파라미터도 받을 수 있고 반환 값도 존재한다는 점에서 함수와 동일하다.
+
+함수와 다른 점은 `in` 을 사용해서 파라미터, 반환 타입 영역과 실제 클로저 코드를 분리하고 있다.
+
+```swift
+{ (firstName: String, lastName: String) -> String in
+  return lastName + firstName + message
+}
+```
+
+클로저의 장점은 간결함과 유연함에 있다. 하지만 위의 코드는 간결하다는 느낌을 받기 힘든데 이는 생략가능한 것을 생략하지 않고 모두 적었기 때문이다.
+
+우선 타입 추론 덕분에 반환하는 타입을 생략할 수 있다.
+```swift
+func helloGenerator(message: String) -> (String, String) -> String {
+  return { firstName, lastName in
+    return lastName + firstName + message
+  }
+}
+```
+
+여기에서 첫 번쨰 파라미터는 `$0` 두 번째 파라미터는 `$1`로 바꿔 쓸 수 있다.
+```swift
+func helloGenerator(message: String) -> (String, String) -> String {
+  return {
+    return $1 + $0 + message
+  }
+}
+```
+
+또한 클로저 내부에 코드가 한 줄이라면 `return`까지 생략할 수 있다.
+```swift
+func helloGenerator(message: String) -> (String, String) -> String {
+  return { $1 + $0 + message }
+}
+```
+
+이렇게 단 한줄의 코드로 줄일 수 있다.
+
+클로저는 변수처럼 졍의할 수 있다.
+```swift
+let hello: (String, String) -> String = { $1 + $0 + "님 안녕하세요!" }
+hello("수열", "전")
+```
+
+옵셔널로도 정의할 수 있고 옵셔널 체이닝도 가능한다.
+```swift
+let hello: ((String, String) -> String)?
+hello?("수열", "전")
+```
+
+클로저를 변수로 정의하고 함수에서 반환할 수 있는 것처럼 파라미터로 받을 수도 있다.
+```swift
+func manipulate(number: Int, using block: (Int) -> Int) -> Int {
+  return block(number)
+}
+
+manipulate(number: 10, using: { (number: Int) -> Int in
+  return number * 2
+})
+```
+
+아까 했던 것처럼 생략도 가능하다.
+```swift
+manipulate(number: 10, using: {
+  $0 * 2
+})
+```
+
+만약 함수의 마지막 파라미터가 클로저라면 괄호와 파라미터 이름까지 생략할 수 있다.
+```swift
+manipulate(number: 10) {
+  $0 * 2
+}
+```
+
+### 클로저 활용하기
+***
+이런 구조로 만들어진 예가 `sorted()` 와 `filter()`이다. 함수가 피리미터로 클로저 하나만을 받는다면 괄호를 아예 생략해도 된다.
+```swift
+let numbers = [1, 3, 2, 6, 7, 5, 8, 4]
+
+let sortedNumbers = numbers.sorted { $0 < $1 }
+print(sortedNumbers) // [1, 2, 3, 4, 5, 6, 7, 8]
+
+let evens = numbers.filter { $0 % 2 == 0 }
+print(evens) // [2, 6, 8, 4]
+```
+
+```swift
+let sortedNumbers = numbers.sorted(by: {s1, s2 in return s1 > s2})
+``` 
+
+에서 생략한 것이다. 
+
+다른 예시로 `map()`과 `reduce()`가 있다.  
+`map()`은 파라미터로 받은 클로저를 모든 요소에 실행하고 그 결과를 반환한다.
+```swift
+let arr1 = [1, 3, 6, 2, 7, 9]
+let arr2 = arr1.map { $0 * 2 } // [2, 6, 12, 4, 14, 18]
+```
+
+`reduce()`는 초기값이 주어자고 초기값과 첫 번째 요소의 실행 결과, 그 결과와 두 번째 요소의 실행 결과, ... 를 반복하여 끝까지 실행한 후의 값을 반환한다.
+```swift
+arr1.reduce(0) { $0 + $1 } // 28
+```
