@@ -129,3 +129,70 @@ class Dog {
   }
 }
 ```
+
+### 속성 (Properties)
+***
+속성은 크게 두 가지로 나뉜다. 값을 가지는 속성과 계산되는 속성이다. 영어로는 Stored Property와 Computed Property이다. 쉽게 속성이 값 자체를 가지고 있는지 혹은 어떤 연산을 수행한 뒤 그 결과를 반환하는 지의 차이다.
+
+지금까지 정의하고 사용한 속성들은 모두 Stored Property이다.  Computed Property는 `get`, `set`을 이용해서 정의할 수 있다. `set`에서는 새로 설정될 값을 `newValue`라는 예약어를 통해서 접근할 수 있다.
+
+```swift
+struct Hex {
+  var decimal: Int?
+  var hexString: String? {
+    get {
+      if let decimal = self.decimal {
+        return String(decimal, radix: 16)
+      } else {
+        return nil
+      }
+    }
+    set {
+      if let newValue = newValue {
+        self.decimal = Int(newValue, radix: 16)
+      } else {
+        self.decimal = nil
+      }
+    }
+  }
+}
+
+var hex = Hex()
+hex.decimal = 10
+hex.hexString // "a"
+
+hex.hexString = "b"
+hex.decimal // Optional(11)
+```
+
+위에서 `hexString`은 실제 값을 가지고 있지 않지만 `decimal`로 값을 받아와 16진수 문자열로 만들어서 반환한다.  
+참고로 `get`만 정의할 경우 `get`을 생략할 수 있는데 이런 속성을 읽기 전용 (**Read Only**) 이라고 한다.
+
+>### Getter와 Setter
+> Getter와 Setter를 사용하는 이유는 객체의 데이터를 객체 외부에서 직접적으로 접근하게 되면 객체의 무결성이 깨질 수 있기 때문에 **메소드를 통해 데이터를 변경** 하는 방법을 선호한다.  
+**외부에서 메소드를 통해서 데이터에 접근하도록 유도**하는 역활을 하는 것이 **Setter**이다.  
+**외부에서 객체의 데이터를 읽을 때 메소드를 사용하는 것**이 **Getter**이다.
+
+`get`, `set`과 비슷한 `willSet`, `didSet`이라는 것이 있는데 이를 프로퍼티 감시자 (**Property Observers**) 라고 한다. 오직 Stored Property에만 적용할 수 있으며 **프로퍼티 값이 새로 할당될 때마다 호출되고 변경되는 값이 현재의 값과 같더라도 호출**된다. 
+
+`willSet`은 값이 변경되기 직전에 호출되고 `didSet`은 값이 변경된 직후에 호출된다. 이떄 `willSet`에는 `newValue`가 `didSet`에는 `oldValue`가 매개변수로 자동 저장된다.
+```swift
+struct Hex {
+  var decimal: Int? {
+    willSet {
+      print("\(self.decimal)에서 \(newValue)로 값이 바뀔 예정입니다.")
+    }
+    didSet {
+      print("\(oldValue)에서 \(self.decimal)로 값이 바뀌었습니다.")
+    }
+  }
+}
+```
+
+일반적으로 어떤 속성의 값이 바뀌었을 때 UI를 업데이트하거나 특정 메소드를 호출하는 등의 역활을 할 때 주로 사용한다.
+
+### 참고
+***
+[40시간 만에 Swift로 IOS 앱 만들기](https://devxoul.gitbooks.io/ios-with-swift-in-40-hours/content/Chapter-3/tuples.html)  
+[Java 자바 - Getter와 Setter 메소드](https://kephilab.tistory.com/54)  
+[[Swift]프로퍼티(Property)](https://jinshine.github.io/2018/05/22/Swift/6.%ED%94%84%EB%A1%9C%ED%8D%BC%ED%8B%B0(Property)/)
