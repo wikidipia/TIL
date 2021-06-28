@@ -3,6 +3,8 @@
 * Kotlin
     * [특징과 설치](./Kotlin/특징과_설치.md)
     * [자료형과 변수](./Kotlin/자료형과_변수.md)
+    * [Null](./Kotlin/Null.md)
+    * [검사과 자료형의 변환](./Kotlin/검사와_자료형_변환.md)
 * Swift
     * [swift_문법_1](./Swift/swift_문법_1.md)
     * [swift_문법_2](./Swift/swift_문법_2.md)
