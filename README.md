@@ -9,6 +9,7 @@
     * [함수](./Kotlin/함수.md)
     * [함수형 프로그래밍](./Kotlin/함수형_프로그래밍.md)
     * [람다](./Kotlin/람다.md)
+    * [고차 함수와 람다식](./Kotlin/고차_함수와_람다식.md)
 * Swift
     * [swift_문법_1](./Swift/swift_문법_1.md)
     * [swift_문법_2](./Swift/swift_문법_2.md)
